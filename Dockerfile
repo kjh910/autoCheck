@@ -22,7 +22,7 @@ RUN apt-get -y install firefox-esr
 
 
 RUN chmod 777 /app/runserver.sh
-EXPOSE 8001
+EXPOSE 8000
 EXPOSE 9224
 
 CMD ["/app/runserver.sh"]
