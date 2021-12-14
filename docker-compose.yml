@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  app:
+    platform: linux/amd64
+    build: './'
+    volumes:
+      - ./app:/app/
+    ports:
+      - 8001:8001
+      - 9224:9224

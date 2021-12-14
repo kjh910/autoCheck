@@ -12,6 +12,8 @@ except FileNotFoundError:
     pass
 
 # subprocess.Popen(r'/usr/bin/google-chrome-stable --remote-debugging-port=9223 --user-data-dir="/home/teste/script/cache"') # 디버거 크롬 구동
+path = chromedriver_autoinstaller.install()
+
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
@@ -27,7 +29,7 @@ chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_experimental_option('useAutomationExtension', False)
 chrome_options.binary_location='/usr/bin/google-chrome-stable'
 chrome_driver_binary = "/usr/bin/chromedriver"
-driver = webdriver.Chrome(executable_path=chrome_driver_binary, chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path=path, chrome_options=chrome_options)
 
 # option = Options()
 # option.add_experimental_option("debuggerAddress", "127.0.0.1:9223")

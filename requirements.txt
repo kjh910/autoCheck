@@ -1,4 +1,9 @@
 Django == 3.2.4
 cryptography == 3.4.7
-Pillow==8.2.0
-selenium==3.141.0
+djangorestframework == 3.12.4
+selenium == 3.141.0
+chromedriver-autoinstaller == 0.2.2
+requests == 2.26.0
+xlrd
+pyvirtualdisplay 
+django-dotenv == 1.4.2
