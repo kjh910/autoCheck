@@ -1,6 +1,7 @@
 FROM --platform=linux/amd64 python:3
 
 ADD requirements.txt /home/
+ENV PORT=80
 
 RUN set -x && \
   apt-get update && \
@@ -22,7 +23,8 @@ RUN apt-get -y install firefox-esr
 
 
 RUN chmod 777 /app/runserver.sh
-EXPOSE 8000
+EXPOSE 80
 EXPOSE 9224
 
-CMD ["/app/runserver.sh"]
+CMD gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 500 
+

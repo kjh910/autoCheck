@@ -104,6 +104,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'detail': {
+            'format': '%(asctime)s %(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'debug':{
+            'level':'DEBUG',
+            'class':'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'detail',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'when': 'D',
+            'backupCount' : 3,
+            'encoding':'utf8',
+        },
+    },
+    'loggers': {
+        'myAppDebug': {
+            'handlers': ['debug'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -131,6 +159,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = os.getenv('CLIENT_ID',"")
-REDIRECT_URI = os.getenv('REDIRECT_URI',"")
-SEARCH_URI = os.getenv('SEARCH_URI',"")
+CLIENT_ID = os.getenv('CLIENT_ID',"938935bd8b2079f6a525b60757f1c3ff")
+REDIRECT_URI = os.getenv('REDIRECT_URI',"http://127.0.0.1/users/login/kakao/callback/")
+SEARCH_URI = os.getenv('SEARCH_URI',"https://jp.louisvuitton.com/jpn-jp/products/speedy-bandouliere-20-nvprod3190095v")
+
+CLIENT_ID = os.environ.get('CLIENT_ID')
+REDIRECT_URI = os.environ.get('REDIRECT_URI')
+SEARCH_URI = os.environ.get('SEARCH_URI')

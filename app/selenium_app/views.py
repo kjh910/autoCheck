@@ -43,15 +43,24 @@ class SearchView(generics.GenericAPIView):
 
         try:
             print(2)
+            import logging
+            logger = logging.getLogger('myAppDebug')
             search_url = settings.SEARCH_URI
+            logger.debug(search_url)
+            logger.debug(settings.BASE_DIR)
             driver.get(search_url)
             time.sleep(5)
             driver.save_screenshot("/app/capture.png")
-            able_class_name = driver.find_elements_by_css_selector('.lv-stock-indicator.-not-available')
+            able_class_name = driver.find_elements_by_css_selector('.lv-stock-indicator.-available')
             not_able_class_Name = driver.find_elements_by_css_selector('.lv-stock-indicator.-not-available')
-            if len(able_class_name) != 0 and len(not_able_class_Name) == 0:
+            
+            logger.debug(len(able_class_name))
+            logger.debug(len(not_able_class_Name))
+            if len(able_class_name) == 0 and len(not_able_class_Name) != 0:
+                logger.debug(1)
                 time.sleep(2)
                 driver.close()
+                logger.debug(2)
                 return redirect(reverse('kakao-login'))
             else:
                 time.sleep(2)
@@ -61,9 +70,10 @@ class SearchView(generics.GenericAPIView):
         except Exception as e:
             print('error')
             print(e)
+            logger.debug(e)
             time.sleep(2)
             driver.close()
-            return Response({'MESSAGE':'在庫なし_error'},status=200)
+            return Response({'MESSAGE':search_url},status=200)
 
 # class SearchView(generics.GenericAPIView):
 
@@ -168,20 +178,38 @@ class KakaoLoginCallback(generics.GenericAPIView):
         # response=requests.post(send_url, headers=headers, data=data)
         # print(response)
         # return Response({'MESSAGE':'SUCCESS'},status=200)
+        import logging
+        logger = logging.getLogger('myAppDebug')
         
         friend_result= requests.get(friend_url, headers=headers).json()
+        uuidsData = {"receiver_uuids": '["{}"]'.format(friend_result.get('elements')[0].get("uuid"))}
+        logger.debug(uuidsData)
         print(friend_result)
         send_url= "https://kapi.kakao.com/v1/api/talk/friends/message/default/send"
+        # post = {
+        #     "object_type": "text",
+        #     "text": "재고 떴따!!",
+        #     "link": {
+        #         "web_url": search_url,
+        #         "mobile_web_url": search_url
+        #     },
+        #     "button_title": "바로 확인"
+        # }
+        
+        # data = {'template_object': json.dumps(post)}
+        # uuidsData.update(data)
         data={
-            'receiver_uuids': '["{}"]'.format(friend_result.get('elements')[0].get("uuid")),
+            "receiver_uuids": '["{}"]'.format(friend_result.get('elements')[0].get("uuid")),
             "template_object": json.dumps({
                 "object_type":"text",
                 "text":"재고 떴따!!",
                 "link":{
-                    "web_url":search_url,
+                    # "web_url":search_url,
+                    "mobile_web_url": search_url
                 },
                 "button_title": "바로 확인"
             })
         }
+        logger.debug(data)
         response = requests.post(send_url, headers=headers, data=data)
         return Response({'MESSAGE':'SUCCESS'},status=200)
