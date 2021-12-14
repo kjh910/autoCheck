@@ -56,7 +56,7 @@ class SearchView(generics.GenericAPIView):
             
             logger.debug(len(able_class_name))
             logger.debug(len(not_able_class_Name))
-            if len(able_class_name) == 0 and len(not_able_class_Name) != 0:
+            if len(able_class_name) != 0 and len(not_able_class_Name) == 0:
                 logger.debug(1)
                 time.sleep(2)
                 driver.close()
