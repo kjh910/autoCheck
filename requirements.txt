@@ -8,3 +8,4 @@ xlrd
 pyvirtualdisplay 
 django-dotenv == 1.4.2
 whitenoise
+gunicorn
