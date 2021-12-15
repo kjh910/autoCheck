@@ -9,6 +9,12 @@ import json
 from django.shortcuts import redirect, reverse
 from selenium.webdriver import FirefoxOptions
 from django.conf import settings
+import logging
+import smtplib
+
+from email.mime.text import MIMEText
+
+logger = logging.getLogger('myAppDebug')
 
 class TurnOnView(generics.GenericAPIView):
 
@@ -42,14 +48,13 @@ class SearchView(generics.GenericAPIView):
         driver = webdriver.Firefox(executable_path='/usr/bin/geckodriver',firefox_options=opts)
 
         try:
+            logger.debug(2)
             print(2)
-            import logging
-            logger = logging.getLogger('myAppDebug')
             search_url = settings.SEARCH_URI
             logger.debug(search_url)
             logger.debug(settings.BASE_DIR)
             driver.get(search_url)
-            time.sleep(5)
+            time.sleep(2)
             driver.save_screenshot("/app/capture.png")
             able_class_name = driver.find_elements_by_css_selector('.lv-stock-indicator.-available')
             not_able_class_Name = driver.find_elements_by_css_selector('.lv-stock-indicator.-not-available')
@@ -58,12 +63,13 @@ class SearchView(generics.GenericAPIView):
             logger.debug(len(not_able_class_Name))
             if len(able_class_name) != 0 and len(not_able_class_Name) == 0:
                 logger.debug(1)
-                time.sleep(2)
+                time.sleep(1)
                 driver.close()
-                logger.debug(2)
-                return redirect(reverse('kakao-login'))
+                logger.debug(1)
+                
+                return redirect(reverse('send-email'))
             else:
-                time.sleep(2)
+                time.sleep(1)
                 driver.close()
                 return Response({'MESSAGE':'在庫なし'},status=200)
             
@@ -75,62 +81,26 @@ class SearchView(generics.GenericAPIView):
             driver.close()
             return Response({'MESSAGE':search_url},status=200)
 
-# class SearchView(generics.GenericAPIView):
+class SendEmail(generics.GenericAPIView):
+    
+    def get(self, request):
+        s = smtplib.SMTP(settings.SMTP, settings.SMTP_PORT)
+        
+        s.starttls()
+        s.login(settings.FROM_EMAIL, settings.APP_PASSWORD)
+        
+        body = """
+            링크 : {}
+            내용 : 재고떴따!! 확인 꼬!!
+        """.format(settings.SEARCH_URI)
+        msg = MIMEText(body)
+        msg['Subject'] = '제목 : 재고 떴따!!!'
 
-#     def get(self, request):
-#         try:
-#             shutil.rmtree(r"/app/cache/")  #쿠키 / 캐쉬파일 삭제
-#         except FileNotFoundError:
-#             pass
+        s.sendmail(settings.FROM_EMAIL, settings.TO_EMAIL, msg.as_string())
 
-#         # subprocess.Popen(r'C:\Program Files\Google\Chrome\Application\chrome.exe --remote-debugging-port=9223 --user-data-dir="C:\chrometemp"') # 디버거 크롬 구동
-#         subprocess.Popen(['google-chrome','--remote-debugging-port=9223','--user-data-dir=/root/script/cache',"--no-sandbox" "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",'--headless'])
-
-#         option = Options()
-#         # option.add_argument("--no-sandbox")
-#         # option.add_argument("--disable-setuid-sandbox")
-#         # option.add_argument('user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36')
-#         option.add_experimental_option("debuggerAddress", "127.0.0.1:9223")
-
-#         # geckodriver_autoinstaller.install()
-#         # chrome_ver = chromedriver_autoinstaller.get_chrome_version().split('.')[0]
-#         chromedriver_autoinstaller.install()
-#         # driver = webdriver.Remote(
-#         #     command_executor='http://selenium-hub:4444/wd/hub',
-#         #     desired_capabilities=DesiredCapabilities.CHROME)
-#         driver = webdriver.Chrome(options=option)
-#         # driver = webdriver.Firefox()
-
-#         try:
-#             # driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe', options=option)
-#             driver.get('https://jp.louisvuitton.com/jpn-jp/new/for-women/the-latest/_/N-1wl5ky9')
-#             time.sleep(2)
-#             driver.refresh()
-#             time.sleep(2)
-#             dt = datetime.datetime.today()
-#             dtstr = dt.strftime("%Y%m%d%H%M%S")
-#             driver.save_screenshot('images/' + dtstr + '.png')
-#             # className = driver.find_elements_by_class_name('lv-product-card__url')
-#             # file= open("C:/Users/systemi/Desktop/teste/config/selenium_app/file_name.txt",'r')
-#             # file.write(className[0].text)
-#             # file.close()
-#             # print(className[0].text)
-#             # className = driver.find_element_by_class_name('lv-stock-indicator').text
-#             # if className != 'サックプラ BB':
-#             #     time.sleep(2)
-#             #     driver.close()
-#             #     return redirect(reverse('kakao-login'))
-
-#             time.sleep(2)
-#             driver.close()
-#             return Response({'MESSAGE':'在庫なし'},status=200)
-#         except Exception as e:
-#             print('error')
-#             print(e)
-#             time.sleep(2)
-#             driver.close()
-#             return Response({'MESSAGE':'在庫なし'},status=200)
-
+        s.quit()
+        return Response({'MESSAGE':'SEND_MAIL_SUCCESS'},status=200)
+        
 class KakaoLogin(generics.GenericAPIView):
 
     def get(self,request):
@@ -212,4 +182,4 @@ class KakaoLoginCallback(generics.GenericAPIView):
         }
         logger.debug(data)
         response = requests.post(send_url, headers=headers, data=data)
-        return Response({'MESSAGE':'SUCCESS'},status=200)
+        return Response({'MESSAGE':'KAKAO_SEND_SUCCESS'},status=200)

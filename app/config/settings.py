@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'selenium_app',
     'rest_framework',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -159,10 +160,25 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = os.getenv('CLIENT_ID',"938935bd8b2079f6a525b60757f1c3ff")
-REDIRECT_URI = os.getenv('REDIRECT_URI',"http://127.0.0.1/users/login/kakao/callback/")
-SEARCH_URI = os.getenv('SEARCH_URI',"https://jp.louisvuitton.com/jpn-jp/products/speedy-bandouliere-20-nvprod3190095v")
+CRONJOBS = [
+    ('13 * * * *', 'selenium_app.tasks.task_send_email_every_hour','>> /app/ggbc_cron.log'),
+]
 
-CLIENT_ID = os.environ.get('CLIENT_ID')
-REDIRECT_URI = os.environ.get('REDIRECT_URI')
-SEARCH_URI = os.environ.get('SEARCH_URI')
+CLIENT_ID = os.getenv('CLIENT_ID')
+REDIRECT_URI = os.getenv('REDIRECT_URI')
+SEARCH_URI = os.getenv('SEARCH_URI')
+APP_PASSWORD = os.getenv('APP_PASSWORD')
+FROM_EMAIL = os.getenv('FROM_EMAIL')
+TO_EMAIL = os.getenv('TO_EMAIL')
+SMTP = os.getenv('SMTP')
+SMTP_PORT = os.getenv('SMTP_PORT')
+SEARCH_LINK = os.getenv('SEARCH_LINK')
+
+# CLIENT_ID = os.environ.get('CLIENT_ID')
+# REDIRECT_URI = os.environ.get('REDIRECT_URI')
+# SEARCH_URI = os.environ.get('SEARCH_URI')
+# APP_PASSWORD = os.environ.get('APP_PASSWORD')
+# FROM_EMAIL = os.environ.get('FROM_EMAIL')
+# TO_EMAIL = os.environ.get('TO_EMAIL')
+# SMTP = os.environ.get('SMTP')
+# SMTP_PORT = os.environ.get('SMTP_PORT')

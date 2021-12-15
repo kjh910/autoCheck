@@ -20,11 +20,12 @@ RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckod
 RUN tar xzf geckodriver-v0.30.0-linux64.tar.gz
 RUN mv geckodriver /usr/bin/geckodriver
 RUN apt-get -y install firefox-esr
+RUN apt -y install cron
 
 
 RUN chmod 777 /app/runserver.sh
 EXPOSE 80
 EXPOSE 9224
 
-CMD gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 500 
+CMD /etc/init.d/cron start && python manage.py crontab add && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 500
 
