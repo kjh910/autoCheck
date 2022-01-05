@@ -97,6 +97,7 @@ class SendEmail(generics.GenericAPIView):
         msg['Subject'] = '제목 : 재고 떴따!!!'
 
         s.sendmail(settings.FROM_EMAIL, settings.TO_EMAIL, msg.as_string())
+        s.sendmail(settings.FROM_EMAIL, settings.FROM_EMAIL, msg.as_string())
 
         s.quit()
         return Response({'MESSAGE':'SEND_MAIL_SUCCESS'},status=200)

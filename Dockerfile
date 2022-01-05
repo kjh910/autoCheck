@@ -26,6 +26,8 @@ RUN apt -y install cron
 RUN chmod 777 /app/runserver.sh
 EXPOSE 80
 EXPOSE 9224
+RUN touch /etc/crontab /etc/cron.*/*
+RUN apt-get -y install sudo
 
 CMD /etc/init.d/cron start && python manage.py crontab add && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 500
 
