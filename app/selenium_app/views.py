@@ -50,11 +50,11 @@ class SearchView(generics.GenericAPIView):
         try:
             logger.debug(2)
             print(2)
-            search_url = settings.SEARCH_URI
+            search_url = "https://jp.louisvuitton.com/jpn-jp/products/papillon-bb-bicolor-monogram-empreinte-leather-nvprod3400010v#M45980"
             logger.debug(search_url)
             logger.debug(settings.BASE_DIR)
             driver.get(search_url)
-            time.sleep(2)
+            time.sleep(10)
             driver.save_screenshot("/app/capture.png")
             able_class_name = driver.find_elements_by_css_selector('.lv-stock-indicator.-available')
             not_able_class_Name = driver.find_elements_by_css_selector('.lv-stock-indicator.-not-available')
@@ -62,7 +62,7 @@ class SearchView(generics.GenericAPIView):
             logger.debug(len(able_class_name))
             logger.debug(len(not_able_class_Name))
             if len(able_class_name) != 0 and len(not_able_class_Name) == 0:
-                logger.debug(1)
+                logger.debug(able_class_name)
                 time.sleep(1)
                 driver.close()
                 logger.debug(1)
