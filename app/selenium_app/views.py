@@ -71,7 +71,7 @@ class SearchView(generics.GenericAPIView):
             else:
                 time.sleep(1)
                 driver.close()
-                return Response({'MESSAGE':'在庫なし'},status=200)
+                return Response({'MESSAGE':'在庫なし','able_class_name':able_class_name,'not_able_class_Name':not_able_class_Name},status=200)
             
         except Exception as e:
             print('error')

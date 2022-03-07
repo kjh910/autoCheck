@@ -1,7 +1,6 @@
 FROM --platform=linux/amd64 python:3
 
 ADD requirements.txt /home/
-ENV PORT=80
 
 RUN set -x && \
   apt-get update && \
@@ -28,6 +27,8 @@ EXPOSE 80
 EXPOSE 9224
 RUN touch /etc/crontab /etc/cron.*/*
 RUN apt-get -y install sudo
+
+ENV PORT=80
 
 CMD /etc/init.d/cron start && python manage.py crontab add && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 500
 
